@@ -10,4 +10,6 @@
 controllers:
     resource: routing.controllers
 
-    
+auth:
+    path: /api/auth
+    methods: ["POST"]   
