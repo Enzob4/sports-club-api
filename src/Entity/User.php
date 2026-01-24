@@ -13,6 +13,8 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Put;
+
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -28,9 +30,12 @@ use ApiPlatform\Metadata\Delete;
         new Post(
             security: "is_granted('ROLE_ADMIN')"
         ),
+        new Put(
+            security: "is_granted('USER_EDIT', object)"
+        ),
         new Delete(
             security: "is_granted('ROLE_ADMIN')"
-        ),
+        ), 
     ]
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
