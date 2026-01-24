@@ -1,0 +1,23 @@
+### 1. Demande de connexion pour obtenir le Token JWT
+# @name login
+POST http://127.0.0.1:8000/api/auth
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "password"
+}
+### 
+
+### 2. Demande de connexion pour obtenir le Token JWT
+# @name login
+POST http://127.0.0.1:8000/api/auth
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "user@example.com",
+  "password": "password"
+}
+### 
