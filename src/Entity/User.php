@@ -66,9 +66,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Team::class, mappedBy: 'coach')]
     private Collection $teams;
 
+    /**
+     * @var Collection<int, Club>
+     */
+    #[ORM\OneToMany(targetEntity: Club::class, mappedBy: 'owner')]
+    private Collection $clubs;
+
     public function __construct()
     {
         $this->teams = new ArrayCollection();
+        $this->clubs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -176,6 +183,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($team->getCoach() === $this) {
                 $team->setCoach(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Club>
+     */
+    public function getClubs(): Collection
+    {
+        return $this->clubs;
+    }
+
+    public function addClub(Club $club): static
+    {
+        if (!$this->clubs->contains($club)) {
+            $this->clubs->add($club);
+            $club->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClub(Club $club): static
+    {
+        if ($this->clubs->removeElement($club)) {
+            // set the owning side to null (unless already changed)
+            if ($club->getOwner() === $this) {
+                $club->setOwner(null);
             }
         }
 

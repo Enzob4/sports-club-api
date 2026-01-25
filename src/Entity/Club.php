@@ -5,11 +5,33 @@ namespace App\Entity;
 use App\Repository\ClubRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Put;
+use App\State\ClubProcessor;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: ClubRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['groups' => ['club:read']],
+    denormalizationContext: ['groups' => ['club:write']],
+    processor: ClubProcessor::class,
+    operations: [
+        new GetCollection(),
+        new Get(),
+        new Post(security: "is_granted('ROLE_USER')"
+        ),
+        new Put(security: "object.getOwner() == user or is_granted('ROLE_ADMIN')"
+        ),
+        new Delete(security: "is_granted('ROLE_ADMIN')"
+        ),
+    ]
+)]
 class Club
 {
     #[ORM\Id]
@@ -17,24 +39,26 @@ class Club
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $name = null;
+    #[ORM\Column(length: 150)]
+    #[Groups(['club:read', 'club:write'])]
+    private string $name;
 
-    #[ORM\Column(length: 255)]
-    private ?string $city = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['club:read', 'club:write'])]
+    private ?string $description = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    private \DateTimeImmutable $createdAt;
 
-    /**
-     * @var Collection<int, Team>
-     */
-    #[ORM\OneToMany(targetEntity: Team::class, mappedBy: 'club', orphanRemoval: true)]
-    private Collection $teams;
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['club:read'])]
+    private User $owner;
 
     public function __construct()
     {
-        $this->teams = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -54,18 +78,6 @@ class Club
         return $this;
     }
 
-    public function getCity(): ?string
-    {
-        return $this->city;
-    }
-
-    public function setCity(string $city): static
-    {
-        $this->city = $city;
-
-        return $this;
-    }
-
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
@@ -78,32 +90,26 @@ class Club
         return $this;
     }
 
-    /**
-     * @return Collection<int, Team>
-     */
-    public function getTeams(): Collection
+    public function getOwner(): ?User
     {
-        return $this->teams;
+        return $this->owner;
     }
 
-    public function addTeam(Team $team): static
+    public function setOwner(?User $owner): static
     {
-        if (!$this->teams->contains($team)) {
-            $this->teams->add($team);
-            $team->setClub($this);
-        }
+        $this->owner = $owner;
 
         return $this;
     }
 
-    public function removeTeam(Team $team): static
+    public function getDescription(): ?string
     {
-        if ($this->teams->removeElement($team)) {
-            // set the owning side to null (unless already changed)
-            if ($team->getClub() === $this) {
-                $team->setClub(null);
-            }
-        }
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
 
         return $this;
     }
