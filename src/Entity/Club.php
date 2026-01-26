@@ -15,6 +15,8 @@ use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Put;
 use App\State\ClubProcessor;
 use Symfony\Component\Serializer\Attribute\Groups;
+use ApiPlatform\Metadata\Link;
+use App\State\JoinClubProcessor; 
 
 #[ORM\Entity(repositoryClass: ClubRepository::class)]
 #[ApiResource(
@@ -29,6 +31,17 @@ use Symfony\Component\Serializer\Attribute\Groups;
         new Put(security: "object.getOwner() == user or is_granted('ROLE_ADMIN')"
         ),
         new Delete(security: "is_granted('ROLE_ADMIN')"
+        ),
+        new Post(
+            uriTemplate: '/clubs/{id}/join',
+            security: "is_granted('ROLE_USER')",
+            processor: JoinClubProcessor::class,
+            name: 'join_club',
+            input: false, 
+            output: Membership::class,
+            openapi: new \ApiPlatform\OpenApi\Model\Operation(
+                summary: 'Join a club by its ID.',
+            )
         ),
     ]
 )]
