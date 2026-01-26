@@ -34,6 +34,10 @@ class JoinClubProcessor implements ProcessorInterface
                 'utilisateur' => $user,
                 'club' => $club,
             ]);
+            
+        if ($club->getOwner() === $user) {
+            throw new ConflictHttpException('The owner cannot join their own club.');
+        }
 
         if ($existingMembership) {
             throw new ConflictHttpException('You are already a member of this club.');
