@@ -56,9 +56,16 @@ class Club
     #[Groups(['club:read'])]
     private User $owner;
 
+    /**
+     * @var Collection<int, Membership>
+     */
+    #[ORM\OneToMany(targetEntity: Membership::class, mappedBy: 'club')]
+    private Collection $memberships;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->memberships = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -110,6 +117,36 @@ class Club
     public function setDescription(?string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Membership>
+     */
+    public function getMemberships(): Collection
+    {
+        return $this->memberships;
+    }
+
+    public function addMembership(Membership $membership): static
+    {
+        if (!$this->memberships->contains($membership)) {
+            $this->memberships->add($membership);
+            $membership->setClub($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMembership(Membership $membership): static
+    {
+        if ($this->memberships->removeElement($membership)) {
+            // set the owning side to null (unless already changed)
+            if ($membership->getClub() === $this) {
+                $membership->setClub(null);
+            }
+        }
 
         return $this;
     }
