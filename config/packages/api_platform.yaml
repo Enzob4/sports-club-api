@@ -10,6 +10,8 @@ api_platform:
         jsonld: ['application/ld+json']
         json: ['application/json']
     defaults:
+        pagination_enabled: true
+        pagination_items_per_page: 10
         stateless: true
         cache_headers:
             vary: ['Content-Type', 'Authorization', 'Origin']

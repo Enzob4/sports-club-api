@@ -17,6 +17,9 @@ use App\State\ClubProcessor;
 use Symfony\Component\Serializer\Attribute\Groups;
 use ApiPlatform\Metadata\Link;
 use App\State\JoinClubProcessor; 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Metadata\ApiFilter;
 
 #[ORM\Entity(repositoryClass: ClubRepository::class)]
 #[ApiResource(
@@ -45,6 +48,13 @@ use App\State\JoinClubProcessor;
         ),
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: [
+    'name' => 'partial'
+])]
+#[ApiFilter(OrderFilter::class, properties: [
+    'name',
+    'id'
+], arguments: ['orderParameterName' => 'order'])]
 class Club
 {
     #[ORM\Id]
