@@ -2,24 +2,23 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\ClubRepository;
+use App\State\ClubProcessor;
+use App\State\JoinClubProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Delete;
-use ApiPlatform\Metadata\Put;
-use App\State\ClubProcessor;
 use Symfony\Component\Serializer\Attribute\Groups;
-use ApiPlatform\Metadata\Link;
-use App\State\JoinClubProcessor; 
-use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
-use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Metadata\ApiFilter;
 
 #[ORM\Entity(repositoryClass: ClubRepository::class)]
 #[ApiResource(
@@ -40,7 +39,7 @@ use ApiPlatform\Metadata\ApiFilter;
             security: "is_granted('ROLE_USER')",
             processor: JoinClubProcessor::class,
             name: 'join_club',
-            input: false, 
+            input: false,
             output: Membership::class,
             openapi: new \ApiPlatform\OpenApi\Model\Operation(
                 summary: 'Join a club by its ID.',
@@ -49,11 +48,11 @@ use ApiPlatform\Metadata\ApiFilter;
     ]
 )]
 #[ApiFilter(SearchFilter::class, properties: [
-    'name' => 'partial'
+    'name' => 'partial',
 ])]
 #[ApiFilter(OrderFilter::class, properties: [
     'name',
-    'id'
+    'id',
 ], arguments: ['orderParameterName' => 'order'])]
 class Club
 {
@@ -65,7 +64,6 @@ class Club
     #[ORM\Column(length: 150)]
     #[Groups(['club:read', 'club:write'])]
     private string $name;
-
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Groups(['club:read', 'club:write'])]

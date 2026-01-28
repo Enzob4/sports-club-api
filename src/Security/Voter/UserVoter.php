@@ -12,12 +12,13 @@ class UserVoter extends Voter
     public const EDIT = 'USER_EDIT';
 
     public function __construct(
-        private Security $security
-    ) {}
+        private Security $security,
+    ) {
+    }
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return $attribute === self::EDIT && $subject instanceof User;
+        return self::EDIT === $attribute && $subject instanceof User;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool

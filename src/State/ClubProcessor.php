@@ -3,13 +3,13 @@
 namespace App\State;
 
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\Metadata\Post;
 use ApiPlatform\State\ProcessorInterface;
 use App\Entity\Club;
 use App\Entity\Membership;
-use Symfony\Bundle\SecurityBundle\Security;
-use ApiPlatform\Metadata\Post;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class ClubProcessor implements ProcessorInterface
 {
@@ -17,8 +17,9 @@ class ClubProcessor implements ProcessorInterface
         #[Autowire(service: 'api_platform.doctrine.orm.state.persist_processor')]
         private ProcessorInterface $persistProcessor,
         private Security $security,
-        private EntityManagerInterface $entityManager
-    ) {}
+        private EntityManagerInterface $entityManager,
+    ) {
+    }
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): mixed
     {
@@ -41,7 +42,6 @@ class ClubProcessor implements ProcessorInterface
 
             $this->entityManager->persist($membership);
         }
-
 
         return $this->persistProcessor->process($data, $operation, $uriVariables, $context);
     }
