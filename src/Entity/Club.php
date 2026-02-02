@@ -24,15 +24,19 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ApiResource(
     normalizationContext: ['groups' => ['club:read']],
     denormalizationContext: ['groups' => ['club:write']],
-    processor: ClubProcessor::class,
     operations: [
         new GetCollection(),
         new Get(),
-        new Post(security: "is_granted('ROLE_USER')"
+        new Post(
+            security: "is_granted('ROLE_USER')",
+            processor: ClubProcessor::class 
         ),
-        new Put(security: "object.getOwner() == user or is_granted('ROLE_ADMIN')"
+        new Put(
+            security: "object.getOwner() == user or is_granted('ROLE_ADMIN')",
+            processor: ClubProcessor::class 
         ),
-        new Delete(security: "is_granted('ROLE_ADMIN')"
+        new Delete(
+            security: "object.getOwner() == user"
         ),
         new Post(
             uriTemplate: '/clubs/{id}/join',
@@ -80,7 +84,12 @@ class Club
     /**
      * @var Collection<int, Membership>
      */
-    #[ORM\OneToMany(targetEntity: Membership::class, mappedBy: 'club')]
+    #[ORM\OneToMany(
+        targetEntity: Membership::class, 
+        mappedBy: 'club', 
+        cascade: ['remove'],
+        orphanRemoval: true 
+    )]
     private Collection $memberships;
 
     public function __construct()
