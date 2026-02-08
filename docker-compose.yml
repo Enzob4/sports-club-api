@@ -1,16 +1,29 @@
 services:
+  # --- BASE DE DONNÉES ---
   database:
     image: postgres:16-alpine
+    container_name: sports_club_db
     environment:
       POSTGRES_DB: sports_club
       POSTGRES_USER: symfony_user
       POSTGRES_PASSWORD: enzoenzo
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-d", "sports_club", "-U", "symfony_user"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - db_data:/var/lib/postgresql/data
 
+  # --- BACKEND (SYMFONY) ---
   backend:
     build: .
     container_name: sports_club_api
+    depends_on:
+      database:
+        condition: service_healthy
     volumes:
       - .:/var/www/html
     ports:
@@ -20,15 +33,18 @@ services:
       APP_ENV: dev
       APP_SECRET: 67d829bf4a1656f4d048d88e02d68e53
       CORS_ALLOW_ORIGIN: '^https?://localhost(:[0-9]+)?$'
-    depends_on:
-      - database
-  
+
+  # --- FRONTEND (VITE/REACT) ---
   frontend:
-    build: ../frontend
+    build: ../sports-club-frontend
     container_name: sports_club_client
+    depends_on:
+      - backend
     ports:
       - "3000:80"
     environment:
       - VITE_API_URL=http://localhost:8000/api
-    depends_on:
-      - backend
+
+# --- VOLUMES ---
+volumes:
+  db_data:

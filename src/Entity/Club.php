@@ -76,7 +76,7 @@ class Club
     #[ORM\Column]
     private \DateTimeImmutable $createdAt;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'clubs')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['club:read'])]
     private User $owner;

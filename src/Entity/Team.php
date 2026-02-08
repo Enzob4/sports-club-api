@@ -23,7 +23,7 @@ class Team
     #[ORM\Column(length: 255)]
     private ?string $category = null;
 
-    #[ORM\ManyToOne(inversedBy: 'teams')]
+    #[ORM\ManyToOne(targetEntity: Club::class)]
     #[ORM\JoinColumn(nullable: false)]
     private ?Club $club = null;
 
