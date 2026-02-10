@@ -49,27 +49,34 @@ A production-ready REST API built with Symfony 7 and API Platform, featuring sec
 
 ## ⚙️ Installation
 
-1. **Clone the repository**
+1. **Créer** un dossier
 ```bash
-git clone <repository-url>
+mkdir sports-club
+cd sports-club
+```
+2. **Cloner** les dépôts
+```bash
+git clone https://github.com/Enzob4/sports-club-frontend.git
+git clone https://github.com/Enzob4/sports-club-api.git
+```
+3. **Démarrer** docker
+```bash
 cd sports-club-api
+docker compose up -d
 ```
-2. **Install dependencies**
+4. **Génerer** les clés de sécurité
 ```bash
-composer install
+docker compose exec backend php bin/console lexik:jwt:generate-keypair
 ```
-3. **Configure Environment Create a .env.local file and update your DATABASE_URL**
+5. **Créer et charger** la base de données et les fixtures
 ```bash
-DATABASE_URL="postgresql://db_user:db_password@127.0.0.1:5432/sports_club?serverVersion=16&charset=utf8"
+docker compose exec backend php bin/console doctrine:migrations:migrate --no-interaction
+docker compose exec backend php bin/console doctrine:fixtures:load --no-interaction
 ```
-4. **Generate JWT keys**
+6. **Se connecter** à http://localhost:3000/
 ```bash
-php bin/console lexik:jwt:generate-keypair
-```
-5. **Initialize Database**
-```bash
-php bin/console doctrine:database:create
-php bin/console doctrine:migrations:migrate --no-interaction
+admin@example.com
+password
 ```
 
 ## 🧪 Run Tests
