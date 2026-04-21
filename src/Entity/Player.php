@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\PlayerRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -17,12 +18,18 @@ class Player
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 2, max: 255)]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 2, max: 255)]
     private ?string $lastname = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[Assert\NotNull]
+    #[Assert\LessThanOrEqual('today')]
     private ?\DateTime $birthDate = null;
 
     #[ORM\ManyToOne(inversedBy: 'players')]

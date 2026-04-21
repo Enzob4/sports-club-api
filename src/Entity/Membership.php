@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\MembershipRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MembershipRepository::class)]
 #[ORM\Table(name: 'membership')]
@@ -20,6 +21,8 @@ class Membership
     private ?Club $club = null;
 
     #[ORM\Column(length: 20)]
+    #[Assert\NotBlank]
+    #[Assert\Choice(choices: ['OWNER', 'MEMBER'])]
     private ?string $role = null;
 
     #[ORM\Column]
