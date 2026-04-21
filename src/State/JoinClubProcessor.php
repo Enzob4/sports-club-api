@@ -5,6 +5,7 @@ namespace App\State;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use App\Entity\Membership;
+use App\Enum\MembershipRole;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -47,7 +48,7 @@ class JoinClubProcessor implements ProcessorInterface
         $membership = new Membership();
         $membership->setUtilisateur($user);
         $membership->setClub($club);
-        $membership->setRole('MEMBER');
+        $membership->setRole(MembershipRole::MEMBER);
         $membership->setCreatedAt(new \DateTimeImmutable());
 
         return $this->persistProcessor->process($membership, $operation, $uriVariables, $context);

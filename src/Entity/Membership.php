@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\MembershipRole;
 use App\Repository\MembershipRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -20,10 +21,9 @@ class Membership
     #[ORM\JoinColumn(nullable: false)]
     private ?Club $club = null;
 
-    #[ORM\Column(length: 20)]
-    #[Assert\NotBlank]
-    #[Assert\Choice(choices: ['OWNER', 'MEMBER'])]
-    private ?string $role = null;
+    #[ORM\Column(length: 20, enumType: MembershipRole::class)]
+    #[Assert\NotNull]
+    private ?MembershipRole $role = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
@@ -49,12 +49,12 @@ class Membership
         return $this;
     }
 
-    public function getRole(): ?string
+    public function getRole(): ?MembershipRole
     {
         return $this->role;
     }
 
-    public function setRole(string $role): static
+    public function setRole(MembershipRole $role): static
     {
         $this->role = $role;
 

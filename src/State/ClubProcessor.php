@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\State\ProcessorInterface;
 use App\Entity\Club;
 use App\Entity\Membership;
+use App\Enum\MembershipRole;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -35,7 +36,7 @@ class ClubProcessor implements ProcessorInterface
             $membership = new Membership();
             $membership->setUtilisateur($user);
             $membership->setClub($data);
-            $membership->setRole('OWNER');
+            $membership->setRole(MembershipRole::OWNER);
             $membership->setCreatedAt(new \DateTimeImmutable());
 
             $data->addMembership($membership);

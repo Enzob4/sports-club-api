@@ -3,9 +3,10 @@
 namespace App\Tests\Functional;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
-use App\Entity\User;
-use App\Entity\Membership;
 use App\Entity\Club;
+use App\Entity\Membership;
+use App\Entity\User;
+use App\Enum\MembershipRole;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -69,7 +70,7 @@ class ClubTest extends ApiTestCase
             ]);
 
         $this->assertNotNull($membership, 'Le membership automatique n\'a pas été créé.');
-        $this->assertEquals('OWNER', $membership->getRole());
+        $this->assertEquals(MembershipRole::OWNER, $membership->getRole());
         $this->assertEquals('Test Club', $membership->getClub()->getName());
         $this->assertEquals($email, $membership->getUtilisateur()->getEmail());
     }

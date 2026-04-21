@@ -3,9 +3,10 @@
 namespace App\Tests\Functional;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
-use App\Entity\User;
 use App\Entity\Club;
 use App\Entity\Membership;
+use App\Entity\User;
+use App\Enum\MembershipRole;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -71,7 +72,7 @@ class JoinClubTest extends ApiTestCase
         ]);
         
         $this->assertNotNull($membership, 'Le membership n\'a pas été trouvé en base.');
-        $this->assertEquals('MEMBER', $membership->getRole());
+        $this->assertEquals(MembershipRole::MEMBER, $membership->getRole());
 
         $client->request('POST', '/api/clubs/'.$club->getId().'/join', [
             'auth_bearer' => $token
